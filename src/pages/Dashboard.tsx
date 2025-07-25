@@ -151,7 +151,7 @@ export default function Dashboard() {
         </div>
         <div className="relative w-full h-[400px] bg-black rounded-lg overflow-hidden flex items-center justify-center">
           {/* No video in schema, so just show image */}
-          <img src={incident.thumbnail_url || "/images/incident1.jpg"} alt="Snapshot" className="w-full h-full object-contain" />
+          <img src={incident.thumbnail_url || "src/assets/incident1.jpg"} alt="Snapshot" className="w-full h-full object-contain" />
         </div>
         {/* Timeline (static for now, can be improved) */}
         <div className="flex items-center gap-2 mt-2">
