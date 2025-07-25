@@ -106,7 +106,7 @@ export default function Dashboard() {
         onClick={onClick}
       >
         <div className="w-14 h-14 flex-shrink-0 rounded overflow-hidden bg-gray-900 flex items-center justify-center">
-          <img src={incident.thumbnail_url || "/images/incident1.jpg"} alt="Incident" width={56} height={56} className="object-cover w-full h-full" />
+          <img src={incident.thumbnail_url || "/assets/incident1.jpg"} alt="Incident" width={56} height={56} className="object-cover w-full h-full" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
