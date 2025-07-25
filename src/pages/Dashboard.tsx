@@ -6,6 +6,8 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// Remove getSupabaseImageUrl and all supabase.storage usage for images
+
 const INCIDENT_TYPE_COLORS = {
   "Suspicious Activity": "bg-[#ffb200] text-black",
   "Unauthorized Access": "bg-[#2d7fff] text-white",
@@ -25,6 +27,14 @@ function timeAgo(date) {
   return then.toLocaleDateString();
 }
 
+// Helper to always use local public/images folder
+function getImagePath(thumbnail_url) {
+  if (!thumbnail_url) return "/images/incident1.jpg";
+  // Remove any folder or leading slash
+  const filename = thumbnail_url.split('/').pop();
+  return `/images/${filename}`;
+}
+
 export default function Dashboard() {
   const [incidents, setIncidents] = useState([]);
   const [selectedIncident, setSelectedIncident] = useState(null);
@@ -39,7 +49,12 @@ export default function Dashboard() {
       supabase.from("incidents").select("*"),
       supabase.auth.getUser(),
     ]);
-    setIncidents(incidentsRes.data || []);
+    // Map incidents to include the correct public URL for the thumbnail
+    const incidentsWithUrls = (incidentsRes.data || []).map(incident => ({
+      ...incident,
+      // thumbnail_url: getSupabaseImageUrl(incident.thumbnail_url) // Removed Supabase Storage logic
+    }));
+    setIncidents(incidentsWithUrls);
     if (userRes.data.user) {
       setUser({
         ...userRes.data.user,
@@ -106,7 +121,7 @@ export default function Dashboard() {
         onClick={onClick}
       >
         <div className="w-14 h-14 flex-shrink-0 rounded overflow-hidden bg-gray-900 flex items-center justify-center">
-          <img src={incident.thumbnail_url || "/incident1.jpg"} alt="Incident" width={56} height={56} className="object-cover w-full h-full" />
+          <img src={getImagePath(incident.thumbnail_url)} alt="Incident" width={56} height={56} className="object-cover w-full h-full" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
@@ -151,7 +166,7 @@ export default function Dashboard() {
         </div>
         <div className="relative w-full h-[400px] bg-black rounded-lg overflow-hidden flex items-center justify-center">
           {/* No video in schema, so just show image */}
-          <img src={incident.thumbnail_url || "/incident1.jpg"} alt="Snapshot" className="w-full h-full object-contain" />
+          <img src={getImagePath(incident.thumbnail_url)} alt="Snapshot" className="w-full h-full object-contain" />
         </div>
         {/* Timeline (static for now, can be improved) */}
         <div className="flex items-center gap-2 mt-2">
